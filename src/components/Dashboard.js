@@ -5,10 +5,10 @@ class Dashboard extends Component{
     render(){
         return(
 
-           <div className="center">
-            <h3>Your Timeline</h3>
+           <div>
+            <h3 className="center">Your Timeline</h3>
 
-            <ul>
+            <ul className="dashboard-list">
                 {
                     this.props.tweetIds.map((id)=>(
                     <li key={id}>

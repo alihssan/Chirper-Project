@@ -2,56 +2,70 @@ import React,{Component} from 'react'
 import {formatTweet,formatDate} from '../utils/helpers.js'
 import {connect} from 'react-redux'
 import { TiArrowBackOutline, TiHeartOutline, TiHeartFullOutline} from 'react-icons/ti/index'
+import {handletoggletweet} from '../actions/tweet.js'
+import {Link,withRouter} from 'react-router-dom'
+
 
 class Tweet extends Component{
-    handlelike(e){
+    handlelike=(e)=>{
         e.preventDefault()
-        /*to be filled in */
+        const {dispatch,tweet,Authen_User}=this.props
+        dispatch(handletoggletweet({
+            id: tweet.id,
+            Authen_User,
+            hasLiked:tweet.hasLiked,
+            
+        }))
+        console.log('Tweet props',this.props.tweet.hasLiked)
+
     }
-    toParent(e){
-                /*to be filled in */
+    toParent(e,id){
+        e.preventDefault()
+        this.props.history.push(`/tweet/${id}`)
 
     }
     render(){
-        console.log('Tweet props',this.props.tweet)
+
         const {tweet}=this.props
         const {avatar,hasLiked,id,likes,name,parent,replies,text,timestamp}=tweet
         if(tweet===null){
             return <p>Doesnot Exist</p>
         }
         return(
-            
-                <div className="tweet">
+            <Link to={`/tweet/${id}`}  className="tweet">
+                
                     <img
                     src={avatar}
                     alt={`Avatar of ${name}`}
                     className='avatar'
                     
                     />
-                    <div className="tweet-info">
-                        <span>{name}</span>
-                        <div>{formatDate(timestamp)}</div>
-                        {
-                            parent && (
-                                <button className="replying-to" onClick={(e)=>this.toParent(e)}>
-                                    {`Replying to @${parent.author}`}
-                                </button>
-                            )
-                        }
-                        <p>{text}</p>
-                    
+                    <div className='tweet-info'>
+                        <div>
+                            <span>{name}</span>
+                            <div>{formatDate(timestamp)}</div>
+                            {
+                                parent && (
+                                    <button className="replying-to" onClick={(e) => this.toParent(e,parent.id)}>
+                                        Replying to @{parent.author}
+                                    </button>
+                                )
+                            }
+                            <p>{text}</p>
+                        </div>
                         <div className="tweet-icons">
                             <TiArrowBackOutline className="tweet-icon"/>
-                            <span>{replies!==0 && replies}</span>
-                            <button className="heart-button" onClick={this.handlelike}>
-                                {hasLiked===true ? <TiHeartFullOutline color='#e0245e' className='tweet-icon'/>
-                                : <TiHeartOutline className='tweet-icon'/>    
-                            }
+                            <span>{replies !== 0 && replies}</span>
+                            <button className="heart-button" onClick={this.handleLike}>
+                                {hasLiked === true ?
+                                <TiHeartFullOutline color="#e0245e" className="tweet-icon"/>
+                                : <TiHeartOutline className="tweet-icon" />
+                                }
                             </button>
-                            <span>{likes!==0 && likes}</span>
+                            <span>{likes !== 0 && likes}</span>
+                        </div>      
                         </div>
-                        </div>
-                </div>
+                </Link>
 
         );
     }
@@ -65,4 +79,4 @@ const mapStateToProps=({Authen_User,Tweet_reducer,User_reducer},{id})=>{
     }
 }
 
-export default connect(mapStateToProps)(Tweet)
+export default withRouter(connect(mapStateToProps)(Tweet))
